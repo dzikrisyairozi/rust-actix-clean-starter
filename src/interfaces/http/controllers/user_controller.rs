@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::{
     application::{
         use_cases::{
-            user::{CreateUserUseCase, UpdateUserUseCase, DeleteUserUseCase},
+            user::{CreateUserUseCase, UpdateUserUseCase, DeleteUserUseCase, GetUserUseCase},
             UseCase,
         },
         error::ApplicationError,
@@ -74,6 +74,26 @@ impl UserController {
 
         match use_case.execute(user_id.into_inner()).await {
             Ok(_) => HttpResponse::NoContent().finish(),
+            Err(ApplicationError::NotFound) => {
+                HttpResponse::NotFound().json(json!({
+                    "error": "User not found"
+                }))
+            }
+            Err(_) => HttpResponse::InternalServerError().json(json!({
+                "error": "Internal server error"
+            })),
+        }
+    }
+
+    pub async fn get_user(
+        pool: web::Data<sqlx::PgPool>,
+        user_id: web::Path<Uuid>,
+    ) -> impl Responder {
+        let repository = PostgresUserRepository::new(pool.get_ref().clone());
+        let use_case = GetUserUseCase::new(repository);
+
+        match use_case.execute(user_id.into_inner()).await {
+            Ok(user) => HttpResponse::Ok().json(user),
             Err(ApplicationError::NotFound) => {
                 HttpResponse::NotFound().json(json!({
                     "error": "User not found"
