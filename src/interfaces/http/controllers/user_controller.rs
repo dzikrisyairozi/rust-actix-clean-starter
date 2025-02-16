@@ -1,15 +1,17 @@
 use actix_web::{web, HttpResponse, Responder};
 use serde_json::json;
+use uuid::Uuid;
 use crate::{
     application::{
         use_cases::{
-            user::CreateUserUseCase,
+            user::{CreateUserUseCase, UpdateUserUseCase},
             UseCase,
         },
         error::ApplicationError,
     },
-    domain::entities::user::CreateUserDto,
+    domain::entities::user::{CreateUserDto, UpdateUserDto},
     infrastructure::persistence::postgres::PostgresUserRepository,
+    interfaces::http::requests::user_requests::UpdateUserRequest,
 };
 
 pub struct UserController;
@@ -31,6 +33,35 @@ impl UserController {
                 HttpResponse::InternalServerError().json(json!({ "error": "Internal server error" }))
             }
             Err(_) => HttpResponse::InternalServerError().json(json!({ "error": "Internal server error" })),
+        }
+    }
+
+    pub async fn update_user(
+        pool: web::Data<sqlx::PgPool>,
+        user_id: web::Path<Uuid>,
+        user_data: web::Json<UpdateUserRequest>,
+    ) -> impl Responder {
+        let repository = PostgresUserRepository::new(pool.get_ref().clone());
+        let use_case = UpdateUserUseCase::new(repository);
+
+        // Convert request to DTO
+        let update_dto = UpdateUserDto {
+            email: user_data.email.clone(),
+            username: user_data.username.clone(),
+            password: user_data.password.clone(),
+        };
+
+        match use_case.execute((user_id.into_inner(), update_dto)).await {
+            Ok(user) => HttpResponse::Ok().json(user),
+            Err(ApplicationError::NotFound) => {
+                HttpResponse::NotFound().json(json!({ "error": "User not found" }))
+            }
+            Err(ApplicationError::Validation(msg)) => {
+                HttpResponse::BadRequest().json(json!({ "error": msg }))
+            }
+            Err(_) => HttpResponse::InternalServerError().json(json!({
+                "error": "Internal server error"
+            })),
         }
     }
 
