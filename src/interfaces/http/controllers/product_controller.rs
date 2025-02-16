@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::{
     application::{
         use_cases::{
-            product::{CreateProductUseCase, UpdateProductUseCase, DeleteProductUseCase},
+            product::{CreateProductUseCase, UpdateProductUseCase, DeleteProductUseCase, GetProductUseCase},
             UseCase,
         },
         error::ApplicationError,
@@ -77,6 +77,26 @@ impl ProductController {
 
         match use_case.execute(product_id.into_inner()).await {
             Ok(_) => HttpResponse::NoContent().finish(),
+            Err(ApplicationError::NotFound) => {
+                HttpResponse::NotFound().json(json!({
+                    "error": "Product not found"
+                }))
+            }
+            Err(_) => HttpResponse::InternalServerError().json(json!({
+                "error": "Internal server error"
+            })),
+        }
+    }
+
+    pub async fn get_product(
+        pool: web::Data<sqlx::PgPool>,
+        product_id: web::Path<Uuid>,
+    ) -> impl Responder {
+        let repository = PostgresProductRepository::new(pool.get_ref().clone());
+        let use_case = GetProductUseCase::new(repository);
+
+        match use_case.execute(product_id.into_inner()).await {
+            Ok(product) => HttpResponse::Ok().json(ProductResponse::from(product)),
             Err(ApplicationError::NotFound) => {
                 HttpResponse::NotFound().json(json!({
                     "error": "Product not found"
