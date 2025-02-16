@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::{
     application::{
         use_cases::{
-            user::{CreateUserUseCase, UpdateUserUseCase},
+            user::{CreateUserUseCase, UpdateUserUseCase, DeleteUserUseCase},
             UseCase,
         },
         error::ApplicationError,
@@ -58,6 +58,26 @@ impl UserController {
             }
             Err(ApplicationError::Validation(msg)) => {
                 HttpResponse::BadRequest().json(json!({ "error": msg }))
+            }
+            Err(_) => HttpResponse::InternalServerError().json(json!({
+                "error": "Internal server error"
+            })),
+        }
+    }
+
+    pub async fn delete_user(
+        pool: web::Data<sqlx::PgPool>,
+        user_id: web::Path<Uuid>,
+    ) -> impl Responder {
+        let repository = PostgresUserRepository::new(pool.get_ref().clone());
+        let use_case = DeleteUserUseCase::new(repository);
+
+        match use_case.execute(user_id.into_inner()).await {
+            Ok(_) => HttpResponse::NoContent().finish(),
+            Err(ApplicationError::NotFound) => {
+                HttpResponse::NotFound().json(json!({
+                    "error": "User not found"
+                }))
             }
             Err(_) => HttpResponse::InternalServerError().json(json!({
                 "error": "Internal server error"

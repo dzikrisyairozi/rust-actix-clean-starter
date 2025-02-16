@@ -11,6 +11,7 @@ pub fn configure_routes(cfg: &mut web::ServiceConfig) {
                 web::scope("/users")
                     .route("", web::post().to(UserController::create_user))
                     .route("/{id}", web::put().to(UserController::update_user))
+                    .route("/{id}", web::delete().to(UserController::delete_user))
                     // Add other user routes
             )
             .service(
