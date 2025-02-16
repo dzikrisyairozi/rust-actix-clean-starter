@@ -3,17 +3,16 @@ use serde_json::json;
 use uuid::Uuid;
 use crate::{
     application::{
-        use_cases::{
-            product::{CreateProductUseCase, UpdateProductUseCase, DeleteProductUseCase, GetProductUseCase},
+        error::ApplicationError, use_cases::{
+            product::{CreateProductUseCase, DeleteProductUseCase, GetProductUseCase, ListProductsUseCase, UpdateProductUseCase},
             UseCase,
-        },
-        error::ApplicationError,
+        }
     },
     domain::entities::product::{CreateProductDto, UpdateProductDto},
     infrastructure::persistence::postgres::PostgresProductRepository,
     interfaces::http::{
         requests::product_requests::{CreateProductRequest, UpdateProductRequest},
-        responses::product_responses::ProductResponse,
+        responses::product_responses::{ProductResponse, ProductsListResponse},
     },
 };
 
@@ -101,6 +100,23 @@ impl ProductController {
                 HttpResponse::NotFound().json(json!({
                     "error": "Product not found"
                 }))
+            }
+            Err(_) => HttpResponse::InternalServerError().json(json!({
+                "error": "Internal server error"
+            })),
+        }
+    }
+
+    pub async fn list_products(
+        pool: web::Data<sqlx::PgPool>,
+    ) -> impl Responder {
+        let repository = PostgresProductRepository::new(pool.get_ref().clone());
+        let use_case = ListProductsUseCase::new(repository);
+
+        match use_case.execute(()).await {
+            Ok(products) => {
+                let response = ProductsListResponse::from(products);
+                HttpResponse::Ok().json(response)
             }
             Err(_) => HttpResponse::InternalServerError().json(json!({
                 "error": "Internal server error"
