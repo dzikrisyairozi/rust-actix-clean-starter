@@ -20,6 +20,7 @@ pub fn configure_routes(cfg: &mut web::ServiceConfig) {
                 web::scope("/products")
                     .route("", web::post().to(ProductController::create_product))
                     .route("/{id}", web::put().to(ProductController::update_product))
+                    .route("/{id}", web::delete().to(ProductController::delete_product))
                     // Add other product routes
             ),
     );
