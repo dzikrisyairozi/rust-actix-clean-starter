@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -8,7 +9,7 @@ pub struct Product {
     pub id: Uuid,
     pub name: String,
     pub description: String,
-    pub price: f64,
+    pub price: Decimal,
     pub stock: i32,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
@@ -18,7 +19,7 @@ pub struct Product {
 pub struct CreateProductDto {
     pub name: String,
     pub description: String,
-    pub price: f64,
+    pub price: Decimal,
     pub stock: i32,
 }
 

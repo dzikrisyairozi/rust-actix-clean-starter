@@ -29,11 +29,4 @@ impl DatabaseConfig {
             .await
             .expect("Failed to initialize database pool")
     }
-
-    pub async fn test_connection(&self) -> Result<(), sqlx::Error> {
-        sqlx::query("SELECT 1")
-            .execute(&self.pool)
-            .await
-            .map(|_| ())
-    }
 }

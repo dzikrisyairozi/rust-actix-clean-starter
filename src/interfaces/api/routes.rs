@@ -14,7 +14,6 @@ pub fn configure_routes(cfg: &mut web::ServiceConfig) {
                     .route("/{id}", web::get().to(UserController::get_user))
                     .route("/{id}", web::put().to(UserController::update_user))
                     .route("/{id}", web::delete().to(UserController::delete_user))
-                    // Add other user routes
             )
             .service(
                 web::scope("/products")
@@ -23,7 +22,6 @@ pub fn configure_routes(cfg: &mut web::ServiceConfig) {
                     .route("/{id}", web::get().to(ProductController::get_product))
                     .route("/{id}", web::put().to(ProductController::update_product))
                     .route("/{id}", web::delete().to(ProductController::delete_product))
-                    // Add other product routes
             ),
     );
 }

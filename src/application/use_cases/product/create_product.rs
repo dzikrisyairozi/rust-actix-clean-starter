@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use rust_decimal_macros::dec;
 use crate::application::{
     error::ApplicationError,
     use_cases::UseCase,
@@ -26,7 +27,7 @@ impl<R: ProductRepository + Send + Sync> UseCase<CreateProductDto, Product, Appl
             return Err(ApplicationError::Validation("Product name is required".to_string()));
         }
 
-        if input.price < 0.0 {
+        if input.price < dec!(0) {
             return Err(ApplicationError::Validation("Price cannot be negative".to_string()));
         }
 
