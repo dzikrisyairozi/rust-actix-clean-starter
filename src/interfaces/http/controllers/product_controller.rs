@@ -1,5 +1,6 @@
 use actix_web::{web, HttpResponse, Responder};
 use serde_json::json;
+use log::{info, error};
 use uuid::Uuid;
 use crate::{
     application::{
@@ -115,12 +116,16 @@ impl ProductController {
 
         match use_case.execute(()).await {
             Ok(products) => {
+                info!("Successfully retrieved {} products", products.len());
                 let response = ProductsListResponse::from(products);
                 HttpResponse::Ok().json(response)
             }
-            Err(_) => HttpResponse::InternalServerError().json(json!({
-                "error": "Internal server error"
-            })),
+            Err(e) => {
+                error!("Error listing products: {:?}", e);  // Add detailed error logging
+                HttpResponse::InternalServerError().json(json!({
+                    "error": "Internal server error"
+                }))
+            }
         }
     }
 

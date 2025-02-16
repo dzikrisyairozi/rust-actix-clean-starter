@@ -1,4 +1,5 @@
 use super::{DatabaseConfig, Environment, LoggerConfig};
+use log::info;
 
 pub struct AppConfig {
     pub env: Environment,
@@ -16,6 +17,7 @@ impl AppConfig {
         // Initialize logger
         LoggerConfig::init(&env.rust_log);
         
+        info!("Initializing database connection...");
         // Initialize database
         let db = DatabaseConfig::init_pool(&env.database_url).await;
         

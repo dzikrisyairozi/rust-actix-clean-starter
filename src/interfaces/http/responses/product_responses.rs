@@ -2,13 +2,14 @@ use serde::Serialize;
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
 use crate::domain::entities::product::Product;
+use rust_decimal::Decimal;
 
 #[derive(Debug, Serialize)]
 pub struct ProductResponse {
     pub id: Uuid,
     pub name: String,
     pub description: String,
-    pub price: f64,
+    pub price: Decimal,
     pub stock: i32,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,

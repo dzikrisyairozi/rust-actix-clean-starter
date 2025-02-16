@@ -2,6 +2,7 @@ use async_trait::async_trait;
 use chrono::Utc;
 use sqlx::PgPool;
 use uuid::Uuid;
+use log::error;
 
 use crate::domain::{
     entities::product::{Product, CreateProductDto, UpdateProductDto},
@@ -102,11 +103,16 @@ impl ProductRepository for PostgresProductRepository {
     }
 
     async fn list(&self) -> Result<Vec<Product>, RepositoryError> {
-        let products = sqlx::query_as::<_, Product>("SELECT * FROM products ORDER BY created_at DESC")
-            .fetch_all(&self.pool)
-            .await
-            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
-
-        Ok(products)
+        match sqlx::query_as::<_, Product>(
+            "SELECT * FROM products ORDER BY created_at DESC"
+        )
+        .fetch_all(&self.pool)
+        .await {
+            Ok(products) => Ok(products),
+            Err(e) => {
+                error!("Database error in list products: {:?}", e);
+                Err(RepositoryError::DatabaseError(e.to_string()))
+            }
+        }
     }
 }
