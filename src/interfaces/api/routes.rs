@@ -18,6 +18,7 @@ pub fn configure_routes(cfg: &mut web::ServiceConfig) {
             )
             .service(
                 web::scope("/products")
+                    .route("", web::get().to(ProductController::list_products))
                     .route("", web::post().to(ProductController::create_product))
                     .route("/{id}", web::get().to(ProductController::get_product))
                     .route("/{id}", web::put().to(ProductController::update_product))
