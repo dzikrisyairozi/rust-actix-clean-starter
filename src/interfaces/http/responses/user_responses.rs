@@ -1,31 +1,33 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 use crate::domain::entities::user::User;
-use uuid::Uuid;
-use chrono::{DateTime, Utc};
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct UserResponse {
-    pub id: Uuid,
+    /// User's unique identifier
+    #[schema(example = "123e4567-e89b-12d3-a456-426614174000")]
+    pub id: uuid::Uuid,
+    /// User's email address
+    #[schema(example = "john.doe@example.com")]
     pub email: String,
+    /// User's username
+    #[schema(example = "johndoe")]
     pub username: String,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+    /// User creation timestamp
+    #[schema(example = "2024-02-16T00:00:00Z")]
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    /// User last update timestamp
+    #[schema(example = "2024-02-16T00:00:00Z")]
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct UsersListResponse {
+    /// List of users
     pub users: Vec<UserResponse>,
-    pub total: usize,
-}
-
-impl From<Vec<User>> for UsersListResponse {
-    fn from(users: Vec<User>) -> Self {
-        let users: Vec<UserResponse> = users.into_iter()
-            .map(UserResponse::from)
-            .collect();
-        let total = users.len();
-        Self { users, total }
-    }
+    /// Total number of users
+    #[schema(example = 10)]
+    pub total: i64,
 }
 
 impl From<User> for UserResponse {
@@ -36,6 +38,15 @@ impl From<User> for UserResponse {
             username: user.username,
             created_at: user.created_at,
             updated_at: user.updated_at,
+        }
+    }
+}
+
+impl From<Vec<User>> for UsersListResponse {
+    fn from(users: Vec<User>) -> Self {
+        Self {
+            total: users.len() as i64,
+            users: users.into_iter().map(UserResponse::from).collect(),
         }
     }
 }
