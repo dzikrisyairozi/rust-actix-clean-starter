@@ -5,11 +5,14 @@ mod infrastructure;
 mod interfaces;
 
 use actix_web::{web, App, HttpServer};
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 use log::info;
 use sqlx::PgPool;
 
 use crate::config::AppConfig;
 use crate::interfaces::api::routes::configure_routes;
+use crate::interfaces::api::docs::ApiDoc;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -26,9 +29,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         info!("Configuring application routes...");
         App::new()
-            // Share database pool with app state
             .app_data(web::Data::new(db_pool.clone()))
-            // Add middleware and routes here
             .wrap(actix_web::middleware::Logger::default())
             .configure(configure_routes)
     })

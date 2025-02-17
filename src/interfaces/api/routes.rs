@@ -1,11 +1,21 @@
 use actix_web::web;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
+use crate::interfaces::api::docs::ApiDoc;
 use crate::interfaces::http::controllers::{
     user_controller::UserController,
     product_controller::ProductController,
 };
 
 pub fn configure_routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(
+    cfg
+    // Swagger UI
+    .service(
+        SwaggerUi::new("/docs/{_:.*}")
+            .url("/api-docs/openapi.json", ApiDoc::openapi())
+    )
+    // API routes
+    .service(
         web::scope("/api/v1")
             .service(
                 web::scope("/users")

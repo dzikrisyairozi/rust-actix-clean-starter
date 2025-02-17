@@ -1,24 +1,36 @@
-use serde::Serialize;
-use uuid::Uuid;
-use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 use crate::domain::entities::product::Product;
-use rust_decimal::Decimal;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct ProductResponse {
-    pub id: Uuid,
+    /// Product's unique identifier
+    #[schema(example = "123e4567-e89b-12d3-a456-426614174000")]
+    pub id: uuid::Uuid,
+    /// Product name
+    #[schema(example = "Awesome Product")]
     pub name: String,
+    /// Product description
+    #[schema(example = "This is an awesome product")]
     pub description: String,
-    pub price: Decimal,
-    pub stock: i32,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+    /// Product price
+    #[schema(example = "99.99")]
+    pub price: rust_decimal::Decimal,
+    /// Product creation timestamp
+    #[schema(example = "2024-02-16T00:00:00Z")]
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    /// Product last update timestamp
+    #[schema(example = "2024-02-16T00:00:00Z")]
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct ProductsListResponse {
+    /// List of products
     pub products: Vec<ProductResponse>,
-    pub total: usize,
+    /// Total number of products
+    #[schema(example = 10)]
+    pub total: i64,
 }
 
 impl From<Product> for ProductResponse {
@@ -28,7 +40,6 @@ impl From<Product> for ProductResponse {
             name: product.name,
             description: product.description,
             price: product.price,
-            stock: product.stock,
             created_at: product.created_at,
             updated_at: product.updated_at,
         }
@@ -37,10 +48,9 @@ impl From<Product> for ProductResponse {
 
 impl From<Vec<Product>> for ProductsListResponse {
     fn from(products: Vec<Product>) -> Self {
-        let products: Vec<ProductResponse> = products.into_iter()
-            .map(ProductResponse::from)
-            .collect();
-        let total = products.len();
-        Self { products, total }
+        Self {
+            total: products.len() as i64,
+            products: products.into_iter().map(ProductResponse::from).collect(),
+        }
     }
 }
