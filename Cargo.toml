@@ -29,4 +29,4 @@ chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1.4", features = ["serde", "v4"] }
 thiserror = "1.0"
 utoipa = { version = "4.1", features = ["actix_extras", "chrono", "uuid", "decimal"] }
-utoipa-swagger-ui = "5.0"
+utoipa-swagger-ui = { version = "5.0", features = ["actix-web"] }
