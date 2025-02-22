@@ -1,0 +1,22 @@
+{
+  "name": "rust-actix-clean-starter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "husky install",
+    "fmt": "prettier --write \"**/*.{json,md,toml,yml,yaml}\"",
+    "fmt:check": "prettier --check \"**/*.{json,md,toml,yml,yaml}\"",
+    "lint:commit": "commitlint --edit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "husky": "^8.0.0",
+    "prettier": "^3.5.2",
+    "prettier-plugin-toml": "^2.0.2"
+  }
+}
