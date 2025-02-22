@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Format Rust code
+cargo fmt -- --check
+# Run Clippy
+cargo clippy -- -D warnings
+# Check formatting of other files
+pnpm fmt:check
