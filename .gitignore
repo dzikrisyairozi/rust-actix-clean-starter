@@ -1,2 +1,7 @@
 /target
+/node_modules
+**/*.rs.bk
+Cargo.lock
+npm-debug.log
+.pnpm-store/
 .env
