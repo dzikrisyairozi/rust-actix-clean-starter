@@ -1,11 +1,11 @@
 use async_trait::async_trait;
 use chrono::Utc;
+use log::error;
 use sqlx::PgPool;
 use uuid::Uuid;
-use log::error;
 
 use crate::domain::{
-    entities::product::{Product, CreateProductDto, UpdateProductDto},
+    entities::product::{CreateProductDto, Product, UpdateProductDto},
     repositories::{ProductRepository, RepositoryError},
 };
 
@@ -22,13 +22,11 @@ impl PostgresProductRepository {
 #[async_trait]
 impl ProductRepository for PostgresProductRepository {
     async fn find_by_id(&self, id: Uuid) -> Result<Option<Product>, RepositoryError> {
-        let product = sqlx::query_as::<_, Product>(
-            "SELECT * FROM products WHERE id = $1"
-        )
-        .bind(id)
-        .fetch_optional(&self.pool)
-        .await
-        .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+        let product = sqlx::query_as::<_, Product>("SELECT * FROM products WHERE id = $1")
+            .bind(id)
+            .fetch_optional(&self.pool)
+            .await
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
 
         Ok(product)
     }
@@ -42,7 +40,7 @@ impl ProductRepository for PostgresProductRepository {
             INSERT INTO products (id, name, description, price, stock, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *
-            "#
+            "#,
         )
         .bind(id)
         .bind(&product.name)
@@ -58,8 +56,14 @@ impl ProductRepository for PostgresProductRepository {
         Ok(product)
     }
 
-    async fn update(&self, id: Uuid, product: UpdateProductDto) -> Result<Product, RepositoryError> {
-        let _current_product = self.find_by_id(id).await?
+    async fn update(
+        &self,
+        id: Uuid,
+        product: UpdateProductDto,
+    ) -> Result<Product, RepositoryError> {
+        let _current_product = self
+            .find_by_id(id)
+            .await?
             .ok_or(RepositoryError::NotFound)?;
 
         let product = sqlx::query_as::<_, Product>(
@@ -73,7 +77,7 @@ impl ProductRepository for PostgresProductRepository {
                 updated_at = $5
             WHERE id = $6
             RETURNING *
-            "#
+            "#,
         )
         .bind(product.name)
         .bind(product.description)
@@ -103,11 +107,10 @@ impl ProductRepository for PostgresProductRepository {
     }
 
     async fn list(&self) -> Result<Vec<Product>, RepositoryError> {
-        match sqlx::query_as::<_, Product>(
-            "SELECT * FROM products ORDER BY created_at DESC"
-        )
-        .fetch_all(&self.pool)
-        .await {
+        match sqlx::query_as::<_, Product>("SELECT * FROM products ORDER BY created_at DESC")
+            .fetch_all(&self.pool)
+            .await
+        {
             Ok(products) => Ok(products),
             Err(e) => {
                 error!("Database error in list products: {:?}", e);

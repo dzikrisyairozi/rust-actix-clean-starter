@@ -1,7 +1,7 @@
+use super::RepositoryError;
+use crate::domain::entities::user::{CreateUserDto, UpdateUserDto, User};
 use async_trait::async_trait;
 use uuid::Uuid;
-use crate::domain::entities::user::{User, CreateUserDto, UpdateUserDto};
-use super::RepositoryError;
 
 #[async_trait]
 pub trait UserRepository: Send + Sync {

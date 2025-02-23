@@ -1,10 +1,7 @@
+use crate::application::{error::ApplicationError, use_cases::UseCase};
+use crate::domain::repositories::UserRepository;
 use async_trait::async_trait;
 use uuid::Uuid;
-use crate::application::{
-    error::ApplicationError,
-    use_cases::UseCase,
-};
-use crate::domain::repositories::UserRepository;
 
 pub struct DeleteUserUseCase<R: UserRepository> {
     repository: R,

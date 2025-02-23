@@ -1,10 +1,10 @@
-use async_trait::async_trait;
+use crate::application::error::ApplicationError;
 use crate::application::use_cases::UseCase;
 use crate::domain::{
     entities::user::{CreateUserDto, User},
     repositories::UserRepository,
 };
-use crate::application::error::ApplicationError;
+use async_trait::async_trait;
 
 pub struct CreateUserUseCase<R: UserRepository> {
     repository: R,
@@ -17,7 +17,9 @@ impl<R: UserRepository> CreateUserUseCase<R> {
 }
 
 #[async_trait]
-impl<R: UserRepository + Send + Sync> UseCase<CreateUserDto, User, ApplicationError> for CreateUserUseCase<R> {
+impl<R: UserRepository + Send + Sync> UseCase<CreateUserDto, User, ApplicationError>
+    for CreateUserUseCase<R>
+{
     async fn execute(&self, input: CreateUserDto) -> Result<User, ApplicationError> {
         // Validate input
         if input.email.is_empty() || input.username.is_empty() || input.password.is_empty() {

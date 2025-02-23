@@ -1,11 +1,7 @@
-use actix_web::{
-    error::ResponseError,
-    http::StatusCode,
-    HttpResponse,
-};
+use crate::application::error::ApplicationError;
+use actix_web::{error::ResponseError, http::StatusCode, HttpResponse};
 use derive_more::Display;
 use serde_json::json;
-use crate::application::error::ApplicationError;
 
 #[derive(Debug, Display)]
 pub enum ApiError {
@@ -25,26 +21,18 @@ pub enum ApiError {
 impl ResponseError for ApiError {
     fn error_response(&self) -> HttpResponse {
         match self {
-            ApiError::InternalServerError => {
-                HttpResponse::InternalServerError().json(json!({
-                    "error": self.to_string()
-                }))
-            }
-            ApiError::BadRequest(ref message) => {
-                HttpResponse::BadRequest().json(json!({
-                    "error": message
-                }))
-            }
-            ApiError::Unauthorized => {
-                HttpResponse::Unauthorized().json(json!({
-                    "error": self.to_string()
-                }))
-            }
-            ApiError::NotFound => {
-                HttpResponse::NotFound().json(json!({
-                    "error": self.to_string()
-                }))
-            }
+            ApiError::InternalServerError => HttpResponse::InternalServerError().json(json!({
+                "error": self.to_string()
+            })),
+            ApiError::BadRequest(ref message) => HttpResponse::BadRequest().json(json!({
+                "error": message
+            })),
+            ApiError::Unauthorized => HttpResponse::Unauthorized().json(json!({
+                "error": self.to_string()
+            })),
+            ApiError::NotFound => HttpResponse::NotFound().json(json!({
+                "error": self.to_string()
+            })),
         }
     }
 

@@ -17,9 +17,7 @@ impl DatabaseConfig {
             .await?;
 
         // Verify database connection
-        sqlx::query("SELECT 1")
-            .execute(&pool)
-            .await?;
+        sqlx::query("SELECT 1").execute(&pool).await?;
 
         Ok(Self { pool })
     }

@@ -1,13 +1,13 @@
-use actix_web::{web, HttpResponse, Responder};
-use serde_json::json;
-use uuid::Uuid;
 use crate::{
     application::{
+        error::ApplicationError,
         use_cases::{
-            user::{CreateUserUseCase, UpdateUserUseCase, DeleteUserUseCase, GetUserUseCase, ListUsersUseCase},
+            user::{
+                CreateUserUseCase, DeleteUserUseCase, GetUserUseCase, ListUsersUseCase,
+                UpdateUserUseCase,
+            },
             UseCase,
         },
-        error::ApplicationError,
     },
     domain::entities::user::{CreateUserDto, UpdateUserDto},
     infrastructure::persistence::postgres::PostgresUserRepository,
@@ -16,6 +16,9 @@ use crate::{
         responses::user_responses::{UserResponse, UsersListResponse},
     },
 };
+use actix_web::{web, HttpResponse, Responder};
+use serde_json::json;
+use uuid::Uuid;
 
 pub struct UserController;
 
@@ -155,11 +158,9 @@ impl UserController {
 
         match use_case.execute(user_id.into_inner()).await {
             Ok(_) => HttpResponse::NoContent().finish(),
-            Err(ApplicationError::NotFound) => {
-                HttpResponse::NotFound().json(json!({
-                    "error": "User not found"
-                }))
-            }
+            Err(ApplicationError::NotFound) => HttpResponse::NotFound().json(json!({
+                "error": "User not found"
+            })),
             Err(_) => HttpResponse::InternalServerError().json(json!({
                 "error": "Internal server error"
             })),
@@ -176,11 +177,9 @@ impl UserController {
 
         match use_case.execute(user_id.into_inner()).await {
             Ok(user) => HttpResponse::Ok().json(UserResponse::from(user)),
-            Err(ApplicationError::NotFound) => {
-                HttpResponse::NotFound().json(json!({
-                    "error": "User not found"
-                }))
-            }
+            Err(ApplicationError::NotFound) => HttpResponse::NotFound().json(json!({
+                "error": "User not found"
+            })),
             Err(_) => HttpResponse::InternalServerError().json(json!({
                 "error": "Internal server error"
             })),
@@ -188,9 +187,7 @@ impl UserController {
     }
 
     /// List all users
-    pub async fn list_users(
-        pool: web::Data<sqlx::PgPool>,
-    ) -> impl Responder {
+    pub async fn list_users(pool: web::Data<sqlx::PgPool>) -> impl Responder {
         let repository = PostgresUserRepository::new(pool.get_ref().clone());
         let use_case = ListUsersUseCase::new(repository);
 
