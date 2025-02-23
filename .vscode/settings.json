@@ -1,0 +1,49 @@
+{
+  // Rust settings
+  "rust-analyzer.checkOnSave.command": "clippy",
+  "rust-analyzer.checkOnSave.allTargets": true,
+  "rust-analyzer.procMacro.enable": true,
+  "rust-analyzer.hover.documentation.enable": true,
+  "rust-analyzer.completion.autoimport.enable": true,
+  "rust-analyzer.inlayHints.enable": true,
+  "rust-analyzer.lens.enable": true,
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.rulers": [100]
+  },
+
+  // TOML settings
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml",
+    "editor.formatOnSave": true
+  },
+
+  // General settings
+  "editor.formatOnSave": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+
+  // Optional: Hide certain files from the editor
+  "files.exclude": {
+    "target/": true,
+    "node_modules/": true
+  },
+
+  // Cursor-specific settings
+  "editor.cursorSmoothCaretAnimation": true,
+  "editor.smoothScrolling": true,
+
+  // Ensure consistent line endings
+  "files.eol": "\n",
+
+  // Optional: Enable GitHub Copilot if you use it
+  "github.copilot.enable": {
+    "*": true,
+    "rust": true,
+    "plaintext": false,
+    "markdown": true
+  }
+}
