@@ -1,17 +1,17 @@
-use utoipa::OpenApi;
 use crate::{
     domain::entities::{
-        product::{Product, CreateProductDto, UpdateProductDto},
-        user::{User, CreateUserDto, UpdateUserDto},
+        product::{CreateProductDto, Product, UpdateProductDto},
+        user::{CreateUserDto, UpdateUserDto, User},
     },
     interfaces::http::{
+        requests::user_requests::{CreateUserRequest, UpdateUserRequest},
         responses::{
             product_responses::{ProductResponse, ProductsListResponse},
             user_responses::{UserResponse, UsersListResponse},
         },
-        requests::user_requests::{CreateUserRequest, UpdateUserRequest},
     },
 };
+use utoipa::OpenApi;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -22,7 +22,6 @@ use crate::{
         crate::interfaces::http::controllers::product_controller::get_product_doc,
         crate::interfaces::http::controllers::product_controller::update_product_doc,
         crate::interfaces::http::controllers::product_controller::delete_product_doc,
-        
         // User endpoints
         crate::interfaces::http::controllers::user_controller::list_users_doc,
         crate::interfaces::http::controllers::user_controller::create_user_doc,

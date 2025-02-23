@@ -1,8 +1,8 @@
-pub mod user_repository;
 pub mod product_repository;
+pub mod user_repository;
 
-pub use user_repository::UserRepository;
 pub use product_repository::ProductRepository;
+pub use user_repository::UserRepository;
 
 #[derive(thiserror::Error, Debug)]
 pub enum RepositoryError {

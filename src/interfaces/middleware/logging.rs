@@ -52,7 +52,7 @@ where
         Box::pin(async move {
             let res = fut.await?;
             let duration = start.elapsed();
-            
+
             info!(
                 "{} {} {} {}ms",
                 method,

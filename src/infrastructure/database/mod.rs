@@ -1,5 +1,5 @@
+use log::{error, info};
 use sqlx::PgPool;
-use log::{info, error};
 use std::time::Duration;
 
 pub async fn init_db(database_url: &str) -> Result<PgPool, sqlx::Error> {

@@ -12,7 +12,7 @@ pub struct CreateProductRequest {
     pub description: String,
     /// The price of the product
     #[schema(example = "999.99")]
-    pub price: Decimal,  // Change from f64 to Decimal
+    pub price: Decimal, // Change from f64 to Decimal
     /// Initial stock quantity
     #[schema(example = "100")]
     pub stock: i32,
@@ -28,7 +28,7 @@ pub struct UpdateProductRequest {
     pub description: Option<String>,
     /// Updated price of the product
     #[schema(example = "1099.99")]
-    pub price: Option<Decimal>,  // Change from Option<f64> to Option<Decimal>
+    pub price: Option<Decimal>, // Change from Option<f64> to Option<Decimal>
     /// Updated stock quantity
     #[schema(example = "50")]
     pub stock: Option<i32>,

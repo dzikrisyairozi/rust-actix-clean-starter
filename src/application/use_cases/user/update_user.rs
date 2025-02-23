@@ -1,13 +1,10 @@
-use async_trait::async_trait;
-use uuid::Uuid;
-use crate::application::{
-    error::ApplicationError,
-    use_cases::UseCase,
-};
+use crate::application::{error::ApplicationError, use_cases::UseCase};
 use crate::domain::{
-    entities::user::{User, UpdateUserDto},
+    entities::user::{UpdateUserDto, User},
     repositories::UserRepository,
 };
+use async_trait::async_trait;
+use uuid::Uuid;
 
 pub struct UpdateUserUseCase<R: UserRepository> {
     repository: R,
@@ -20,26 +17,34 @@ impl<R: UserRepository> UpdateUserUseCase<R> {
 }
 
 #[async_trait]
-impl<R: UserRepository + Send + Sync> UseCase<(Uuid, UpdateUserDto), User, ApplicationError> for UpdateUserUseCase<R> {
+impl<R: UserRepository + Send + Sync> UseCase<(Uuid, UpdateUserDto), User, ApplicationError>
+    for UpdateUserUseCase<R>
+{
     async fn execute(&self, input: (Uuid, UpdateUserDto)) -> Result<User, ApplicationError> {
         let (id, update_dto) = input;
 
         // Validate input
         if let Some(email) = &update_dto.email {
             if email.is_empty() {
-                return Err(ApplicationError::Validation("Email cannot be empty".to_string()));
+                return Err(ApplicationError::Validation(
+                    "Email cannot be empty".to_string(),
+                ));
             }
         }
 
         if let Some(username) = &update_dto.username {
             if username.is_empty() {
-                return Err(ApplicationError::Validation("Username cannot be empty".to_string()));
+                return Err(ApplicationError::Validation(
+                    "Username cannot be empty".to_string(),
+                ));
             }
         }
 
         if let Some(password) = &update_dto.password {
             if password.is_empty() {
-                return Err(ApplicationError::Validation("Password cannot be empty".to_string()));
+                return Err(ApplicationError::Validation(
+                    "Password cannot be empty".to_string(),
+                ));
             }
         }
 

@@ -1,6 +1,6 @@
+use crate::domain::entities::product::Product;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-use crate::domain::entities::product::Product;
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct ProductResponse {

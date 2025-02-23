@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
-    "fmt": "prettier --write \"**/*.{json,md,toml,yml,yaml}\"",
-    "fmt:check": "prettier --check \"**/*.{json,md,toml,yml,yaml}\"",
+    "fmt": "prettier --write \"**/*.{json,md,yml,yaml}\"",
+    "fmt:check": "prettier --check \"**/*.{json,md,yml,yaml}\"",
     "lint:commit": "commitlint --edit"
   },
   "keywords": [],
