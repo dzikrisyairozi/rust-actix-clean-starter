@@ -4,5 +4,12 @@
 # Build the project
 cargo build
 
+# Run clippy with allowed warnings
+cargo clippy -- \
+    -A dead_code \
+    -A unused_variables \
+    -A unused_imports \
+    -D warnings
+
 # TODO: Run tests if necessary
 # cargo test
