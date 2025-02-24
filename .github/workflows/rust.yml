@@ -36,11 +36,8 @@ jobs:
         run: cargo fmt -- --check
 
       - name: Run clippy
-        run: cargo clippy -- \
-          -A dead_code \
-          -A unused_variables \
-          -A unused_imports \
-          -D warnings
+        run: |
+          cargo clippy -- -A dead_code -A unused_variables -A unused_imports -D warnings
 
       - name: Build
         run: cargo build --verbose
