@@ -21,22 +21,137 @@ A production-ready starter template for building REST APIs with Rust, following 
 
 ## Project Structure
 
+The project follows clean architecture principles, organized in layers:
+
 ```
-domain/ # Business entities and interfaces
-application/ # Use cases and business logic
-infrastructure/ # External implementations (database, etc.)
-interfaces/ # API controllers and middleware
-config/ # Application configuration
+src/
+├── domain/                # Enterprise business rules
+│   ├── entities/          # Business objects and DTOs
+│   │   ├── product.rs     # Product entity and DTOs
+│   │   └── user.rs        # User entity and DTOs
+│   └── repositories/      # Repository interfaces
+│
+├── application/          # Application business rules
+│   ├── error.rs          # Application-specific errors
+│   └── use_cases/        # Business use cases
+│       ├── product/      # Product-related use cases
+│       │   ├── create_product.rs
+│       │   ├── delete_product.rs
+│       │   ├── get_product.rs
+│       │   ├── list_products.rs
+│       │   └── update_product.rs
+│       └── user/         # User-related use cases
+│           ├── create_user.rs
+│           ├── delete_user.rs
+│           ├── get_user.rs
+│           ├── list_users.rs
+│           └── update_user.rs
+│
+├── infrastructure/       # External implementations
+│   ├── repositories/     # Repository implementations
+│   │   ├── product.rs    # Product repository PostgreSQL impl
+│   │   └── user.rs       # User repository PostgreSQL impl
+│   └── database/         # Database-specific code
+│       └── migrations/   # SQL migrations
+│
+├── interfaces/          # Interface adapters
+│   └── api/             # REST API
+│       ├── controllers/ # Request handlers
+│       ├── middleware/  # API middleware
+│       ├── routes.rs    # Route definitions
+│       └── docs.rs      # OpenAPI documentation
+│
+└── config/             # Configuration
+    ├── app.rs          # Application configuration
+    ├── database.rs     # Database configuration
+    ├── environment.rs  # Environment variables
+    └── logger.rs       # Logging configuration
 ```
+
+### Layer Responsibilities
+
+#### Domain Layer (`domain/`)
+
+- Contains enterprise-wide business rules
+- Defines entities and repository interfaces
+- No dependencies on other layers
+- Pure business logic
+
+#### Application Layer (`application/`)
+
+- Contains application-specific business rules
+- Implements use cases using domain entities
+- Depends only on domain layer
+- Orchestrates domain objects
+
+#### Infrastructure Layer (`infrastructure/`)
+
+- Implements interfaces defined in domain layer
+- Contains database implementations
+- Handles external concerns (database, external services)
+- Depends on domain and application layers
+
+#### Interfaces Layer (`interfaces/`)
+
+- Contains controllers and presenters
+- Handles HTTP requests and responses
+- Implements API endpoints
+- Uses application use cases
+
+#### Configuration (`config/`)
+
+- Manages application configuration
+- Handles environment variables
+- Sets up database connections
+- Configures logging
+
+### Key Components
+
+#### Entities
+
+- `Product`: Represents product data and operations
+- `User`: Represents user data and operations
+
+#### Use Cases
+
+- Product Management:
+  - Create, Read, Update, Delete operations
+  - List all products
+  - Input validation and business rules
+- User Management:
+  - User registration and management
+  - CRUD operations for users
+  - User data validation
+
+#### API Endpoints
+
+- Products API:
+  - `POST /api/products` - Create product
+  - `GET /api/products` - List products
+  - `GET /api/products/{id}` - Get product
+  - `PUT /api/products/{id}` - Update product
+  - `DELETE /api/products/{id}` - Delete product
+- Users API:
+  - `POST /api/users` - Create user
+  - `GET /api/users` - List users
+  - `GET /api/users/{id}` - Get user
+  - `PUT /api/users/{id}` - Update user
+  - `DELETE /api/users/{id}` - Delete user
+
+#### Database
+
+- PostgreSQL for data persistence
+- SQLx for type-safe database operations
+- Migration-based schema management
 
 ## Getting Started
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/yourusername/rust-actix-clean-starter
-   cd rust-actix-clean-starter
-   ```
+```bash
+git clone https://github.com/yourusername/rust-actix-clean-starter
+cd rust-actix-clean-starter
+```
 
 2. Install dependencies:
 
