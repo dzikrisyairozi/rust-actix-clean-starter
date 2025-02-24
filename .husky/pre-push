@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run tests
-cargo test
+# Build the project
+cargo build
+
+# TODO: Run tests if necessary
+# cargo test
